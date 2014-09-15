@@ -22,15 +22,10 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        var fetchedResultsController = getFetchResultsController()
+        self.fetchedResultscontroller = getFetchResultsController()
         var error:NSError? = nil
-        fetchedResultscontroller.delegate = self
-        fetchedResultscontroller.performFetch(&error)
-        
-//        println(results)
-        
-//        println(error)
-        
+        self.fetchedResultscontroller.delegate = self
+        self.fetchedResultscontroller.performFetch(&error)
     }
 
     override func didReceiveMemoryWarning() {
@@ -145,13 +140,15 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     // Utility Methods
     
     func getFetchResultsController() -> NSFetchedResultsController {
-        var fetchedResultscontroller = NSFetchedResultsController(fetchRequest: TaskFetchRequest(), managedObjectContext: (UIApplication.sharedApplication().delegate as AppDelegate).managedObjectContext!, sectionNameKeyPath: "completed", cacheName: nil)
+        var fetchedResultscontroller = NSFetchedResultsController(fetchRequest: TaskFetchRequest(), managedObjectContext: managedObjectContext!, sectionNameKeyPath: "completed", cacheName: "TaskCache")
         return fetchedResultscontroller
     }
     
     
     func TaskFetchRequest() -> NSFetchRequest {
-        let fetchRequest = NSFetchRequest(entityName: "Task")
+        let fetchRequest = NSFetchRequest()
+        let entity = NSEntityDescription.entityForName("Task", inManagedObjectContext: managedObjectContext!)
+        fetchRequest.entity = entity
         let sortDescriptor = NSSortDescriptor(key: "date", ascending: true)
         let completedDescriptor = NSSortDescriptor(key: "completed", ascending: true)
         fetchRequest.sortDescriptors = [sortDescriptor]
